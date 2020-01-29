@@ -32,12 +32,7 @@ def energy_of_latt(spin_arr, latt, x, y):
     return single*sum_neighbors
 
 
-def simulate():
-    #Asking User for inputs
-    latt = eval(input("Lattice Size: "))
-    mc_runs = eval(input("Number of Monte Carlo runs: "))
-    t_input = eval(input("Input Temperature Range Zero to: "))
-    step_size = eval(input("Input number of Temperature Steps: "))
+def simulate(latt=10, mc_runs=500, t_input=10, step_size=1):
 
     #Definind array for storage of future energy and magnetization values
     mag_arr = []
@@ -84,11 +79,27 @@ def simulate():
 
     return {'mag': mag_arr, 'ene': ene_arr}
 
-output = simulate()
+if __name__ == "__main__":
+    import argparse
 
-#plotting magnetization and energy vs temperature
-temp_ene = plt.plot(temperature, output['mag'], color = 'green')
-temp_mag = plt.plot(temperature, output['ene'], color = 'purple')
+    parser = argparse.ArgumentParser(description='2D Ising Monte Carlo')
+    parser.add_argument("--latt", dest="latt", type=int, default=10,
+                        help="number of lattice sites")
+    parser.add_argument("--mc-runs", dest="mc_runs", type=int, default=500,
+                        help="number of MC steps")
+    parser.add_argument("--temperature", dest="t_input", type=float, default=10.0,
+                        help="maximum of temperature range")
+    parser.add_argument("--nsteps", dest="step_size", type=int, default=1,
+                        help="number of temperature steps from 0 to temperature")
 
-#To show plots
-plt.show()
+    args = parser.parse_args()
+
+    output = simulate(latt=args.latt, mc_runs=args.mc_runs,
+                      t_input=args.t_input, step_size=args.step_size)
+
+    #plotting magnetization and energy vs temperature
+    temp_ene = plt.plot(temperature, output['mag'], color = 'green')
+    temp_mag = plt.plot(temperature, output['ene'], color = 'purple')
+
+    #To show plots
+    plt.show()
